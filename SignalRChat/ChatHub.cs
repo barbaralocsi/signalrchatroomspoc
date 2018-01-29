@@ -11,12 +11,15 @@ namespace SignalRChat
     public class ChatHub : Hub
     {
 
-        static ConcurrentDictionary<string, string> dic = new ConcurrentDictionary<string, string>();
+        public static HashSet<string> groupNames = new HashSet<string>();
 
         string systemMessageName = "System";
 
         public void Send(string roomName, string name, string message)
         {
+            //string connectionID = Context.ConnectionId;
+            //string username = Context.User.Identity.Name;
+            //string userName = Clients.Caller.userName;
             // Call the broadcastMessage method to update clients.
             //Clients.All.broadcastMessage(name, message);
             Clients.Group(roomName).addChatMessage(name, message + " " + Context.ConnectionId);
@@ -24,8 +27,14 @@ namespace SignalRChat
 
         public async Task JoinRoom(string roomName, string name)
         {
+            if (!groupNames.Contains(roomName))
+            {
+                groupNames.Add(roomName);
+                Clients.All.broadcastNewGroupCreated(groupNames.ToList());
+            }
+            //Context.ConnectionId
             await Groups.Add(Context.ConnectionId, roomName);
-            Clients.Group(roomName).addChatMessage(systemMessageName , name + " added to group");
+            Clients.Group(roomName).addChatMessage(systemMessageName, name + " added to group");
         }
 
         public Task LeaveRoom(string roomName, string name)
@@ -33,5 +42,11 @@ namespace SignalRChat
             Clients.Group(roomName).addChatMessage(systemMessageName, name + " left the group");
             return Groups.Remove(Context.ConnectionId, roomName);
         }
+
+        public List<string> getGroupList(){
+            return groupNames.ToList();
+        }
+
+
     }
 }
