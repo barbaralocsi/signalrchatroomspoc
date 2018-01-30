@@ -120,7 +120,6 @@
 
                 var roomsDiv = document.getElementById("rooms");
                 var groups = roomsDiv.getElementsByTagName('li');
-                alert(groups.length);
                 for (var i = 0; i < groups.length; i++) {
                     var group = groups[i];
                     group.addEventListener("click", function (e) {
@@ -130,7 +129,6 @@
             }
 
             function changeGroup(newRoomName) {
-                alert(newRoomName);
                 chat.server.leaveRoom(roomName, $('#displayname').val());
                 chat.server.joinRoom(newRoomName, $('#displayname').val());
                 roomName = newRoomName;

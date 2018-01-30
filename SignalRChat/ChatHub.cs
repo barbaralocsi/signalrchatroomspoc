@@ -13,7 +13,7 @@ namespace SignalRChat
 
         public static HashSet<string> groupNames = new HashSet<string>();
 
-        string systemMessageName = "System";
+        string systemMessageName = "system";
 
         public void Send(string roomName, string name, string message)
         {
@@ -35,12 +35,12 @@ namespace SignalRChat
             }
             //Context.ConnectionId
             await Groups.Add(Context.ConnectionId, roomName);
-            Clients.Group(roomName).addChatMessage(systemMessageName, name + " added to group: " + roomName);
+            Clients.Group(roomName).addChatMessage(roomName + " room " + systemMessageName, name + " added to group: " + roomName);
         }
 
         public Task LeaveRoom(string roomName, string name)
         {
-            Clients.Group(roomName).addChatMessage(systemMessageName, name + " left the group: " + roomName);
+            Clients.Group(roomName).addChatMessage(roomName + " room " + systemMessageName, name + " left the group: " + roomName);
             return Groups.Remove(Context.ConnectionId, roomName);
         }
 
