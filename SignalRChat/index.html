@@ -69,6 +69,10 @@
 
                 // Get the room name and store it
                 roomName = prompt("Please enter chat name", "main");
+                if (roomName == "") {
+                    roomName = "main";
+                }
+
 
                 // Get the user name and store it to prepend to messages.
                 $('#displayname').val(prompt('Enter your name:', ''));
