@@ -22,7 +22,8 @@ namespace SignalRChat
             //string userName = Clients.Caller.userName;
             // Call the broadcastMessage method to update clients.
             //Clients.All.broadcastMessage(name, message);
-            Clients.Group(roomName).addChatMessage(name, message + " " + Context.ConnectionId);
+            //Clients.Group(roomName).addChatMessage(name, message + " " + Context.ConnectionId);
+            Clients.Group(roomName).addChatMessage(name, message);
         }
 
         public async Task JoinRoom(string roomName, string name)
@@ -34,12 +35,12 @@ namespace SignalRChat
             }
             //Context.ConnectionId
             await Groups.Add(Context.ConnectionId, roomName);
-            Clients.Group(roomName).addChatMessage(systemMessageName, name + " added to group");
+            Clients.Group(roomName).addChatMessage(systemMessageName, name + " added to group: " + roomName);
         }
 
         public Task LeaveRoom(string roomName, string name)
         {
-            Clients.Group(roomName).addChatMessage(systemMessageName, name + " left the group");
+            Clients.Group(roomName).addChatMessage(systemMessageName, name + " left the group: " + roomName);
             return Groups.Remove(Context.ConnectionId, roomName);
         }
 

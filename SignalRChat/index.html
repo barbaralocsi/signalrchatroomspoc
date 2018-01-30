@@ -29,9 +29,12 @@
     <script src="signalr/hubs"></script>
     <!--Add script to update the page and send messages.-->
     <script type="text/javascript">
+        var chat;
+        var roomName;
+
         $(function () {
             // Declare a proxy to reference the hub.
-            var chat = $.connection.chatHub;
+            chat = $.connection.chatHub;
             // Create a function that the hub can call to broadcast messages.
             chat.client.addChatMessage = function (name, message) {
                 // Html encode display name and message.
@@ -43,7 +46,7 @@
             };
 
             // Get the room name and store it
-            var roomName = prompt("Please enter chat name", "main");
+            roomName = prompt("Please enter chat name", "main");
 
             // Get the user name and store it to prepend to messages.
             $('#displayname').val(prompt('Enter your name:', ''));
@@ -64,6 +67,11 @@
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
+
+
+
+
+
             });
 
             chat.client.broadcastNewGroupCreated = fillGroupList;
@@ -76,13 +84,33 @@
                 }
             });
 
+
+
+
+
         });
 
         function fillGroupList (roomList) {
             $('#rooms').empty();
             for (i = 0; i < roomList.length; i++) {
-                $('#rooms').append('<li><strong>' + roomList[i] + '</li>');
+                $('#rooms').append('<li id="' +roomList[i]+  '"><strong>' + roomList[i] + '</strong></li>');
             }
+
+            var roomsDiv = document.getElementById("rooms");
+            var groups = roomsDiv.getElementsByTagName('li');
+            for (var i = 0; i < groups.length; i++) {
+                var group = groups[i];
+                group.addEventListener("click", function () {
+                    changeGroup(group.id);
+                });
+            }
+        }
+
+        function changeGroup(newRoomName) {
+            alert(newRoomName);
+            chat.server.leaveRoom(roomName, $('#displayname').val());
+            chat.server.joinRoom(newRoomName, $('#displayname').val());
+            roomName = newRoomName;
         }
 
 
