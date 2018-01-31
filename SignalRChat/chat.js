@@ -85,11 +85,13 @@ function fillGroupList(roomList) {
 
     var roomsDiv = document.getElementById("rooms");
     var groups = roomsDiv.getElementsByTagName('li');
+    var changeGroupEventListener = function (e) {
+        changeGroup(e.currentTarget.id);
+    };
+
     for (var i = 0; i < groups.length; i++) {
         var group = groups[i];
-        group.addEventListener("click", function (e) {
-            changeGroup(e.currentTarget.id);
-        });
+        group.addEventListener("click", changeGroupEventListener);
     }
 }
 
