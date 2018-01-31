@@ -12,8 +12,9 @@ namespace SignalRChat
     {
 
         public static HashSet<string> groupNames = new HashSet<string>();
+        public static OnlineUserHandler userHandler = new OnlineUserHandler();
 
-        string systemMessageName = "system";
+        //string systemMessageName = "system";
 
         public void Send(string roomName, string name, string message)
         {
@@ -26,28 +27,37 @@ namespace SignalRChat
             Clients.Group(roomName).addChatMessage(name, message);
         }
 
-        public async Task JoinRoom(string roomName, string name)
+        public async Task JoinRoom(string roomName, string userName)
         {
             if (!groupNames.Contains(roomName))
             {
                 groupNames.Add(roomName);
                 Clients.All.broadcastNewGroupCreated(groupNames.ToList());
             }
-            //Context.ConnectionId
+            userHandler.AddUserToRoom(Context.ConnectionId, roomName, userName);
+
             await Groups.Add(Context.ConnectionId, roomName);
-            Clients.Group(roomName).addChatMessage(roomName + " room " + systemMessageName, name + " added to group: " + roomName);
+            Clients.Group(roomName).onlineListChanged(roomName);
+            Clients.Group(roomName).addChatMessage(roomName + " bot ", userName + " joined group: " + roomName);
         }
 
         public Task LeaveRoom(string roomName, string name)
         {
-            Clients.Group(roomName).addChatMessage(roomName + " room " + systemMessageName, name + " left the group: " + roomName);
+            userHandler.RemoveUserFromRoom(Context.ConnectionId, roomName);
+            Clients.Group(roomName).onlineListChanged(roomName);
+            Clients.Group(roomName).addChatMessage(roomName + " bot ", name + " left the group: " + roomName);
             return Groups.Remove(Context.ConnectionId, roomName);
         }
 
-        public List<string> getGroupList(){
+        public List<string> getGroupList()
+        {
             return groupNames.ToList();
         }
 
 
+        public List<User> getOnlineList(string groupName)
+        {
+            return userHandler.getOnlineList(groupName);
+        }
     }
 }

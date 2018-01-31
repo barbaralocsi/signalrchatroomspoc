@@ -35,21 +35,37 @@
             overflow-y: scroll;
         }
 
+        .online {
+            padding: 20px;
+            background-color: #90EE90;
+            flex-direction: column;
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border-style: solid;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="row" id="welcome"></div>
+        <div class="row">
+            <div class="col-sm-3"><h4>Rooms</h4><br>Click on name to switch room</div>
+            <div class="col-sm-7" id="welcome"></div>
+            <div class="col-sm-2"><h4>Online</h4></div>
+        </div>
         <div class="row">
             <div class="rooms col-sm-2" id="rooms"></div>
             <div class="col-sm-1"></div>
-            <div class="chatDiv col-sm-9" id="chatDiv">
+            <div class="chatDiv col-sm-6" id="chatDiv">
                 <ul id="discussion"></ul>
             </div>
+            <div class="col-sm-1"></div>
+            <div class="online col-sm-2" id="online"></div>
         </div>
         <div class="row">
             <div class="col-sm-3"></div>
-            <div class="col-sm-9">
+            <div class="col-sm-7">
                 <input type="text" id="message" autocomplete="off" />
                 <input type="submit" id="sendmessage" value="Send" />
                 <input type="hidden" id="displayname" />
@@ -91,7 +107,7 @@
                 $.connection.hub.start().done(function () {
                     // Get the room name and store it
                     roomName = prompt("Please enter chat name", "main");
-                    if (roomName == "") {
+                    if (!roomName) {
                         roomName = "main";
                     }
 
@@ -100,7 +116,7 @@
                     // Get the user name and store it to prepend to messages.
                     $('#displayname').val(prompt('Enter your name:', ''));
 
-                    $('#welcome').append("<h4>Welcome " + $('#displayname').val() + "</h4>");
+                    $('#welcome').append("<h4>Welcome " + $('#displayname').val() + "</h4><br>Your connectionId is = " + $.connection.hub.id);
 
                     chat.server.joinRoom(roomName, $('#displayname').val());
                     chat.server.getGroupList().done(fillGroupList);
@@ -121,7 +137,7 @@
                 });
 
                 chat.client.broadcastNewGroupCreated = fillGroupList;
-
+                chat.client.onlineListChanged = fillOnlineList;
 
 
                 $("#message").keyup(function (event) {
@@ -163,6 +179,16 @@
                 roomName = newRoomName;
                 chat.server.getGroupList().done(fillGroupList);
                 $('#discussion').empty();
+                fillOnlineList(newRoomName);
+            }
+
+            function fillOnlineList(newRoomName) {
+                chat.server.getOnlineList(newRoomName).done(function (onlines) {
+                    $('#online').empty();
+                    for (i = 0; i < onlines.length; i++) {
+                        $('#online').append('<li>' + onlines[i].Name + '</li>');
+                    }
+                });
             }
 
 
