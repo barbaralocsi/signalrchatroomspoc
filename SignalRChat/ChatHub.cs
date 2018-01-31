@@ -59,5 +59,17 @@ namespace SignalRChat
         {
             return userHandler.getOnlineList(groupName);
         }
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            Clients.All.addChatMessage("Server", userHandler.getUserName(Context.ConnectionId) + " disconnected from the server");
+            List<string > rooms = userHandler.getRoomsOfUser(Context.ConnectionId);
+            foreach (var item in rooms) {
+                Clients.Group(item).onlineListChanged(item);
+            }
+
+            userHandler.RemoveUser(Context.ConnectionId);
+            return base.OnDisconnected(stopCalled);
+        }
     }
 }

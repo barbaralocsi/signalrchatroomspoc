@@ -51,5 +51,28 @@ namespace SignalRChat
             return null;
         }
 
+        public void RemoveUser(string connectionId)
+        {
+            allUsers.RemoveWhere(u => u.ConnectionID == connectionId);
+            foreach (var item in onlineUsersOfGroups)
+            {
+                item.Value.RemoveAll(x => x.ConnectionID == connectionId);
+            }
+        }
+
+        public string getUserName(string connectionId) {
+            return allUsers.FirstOrDefault(x => x.ConnectionID == connectionId).Name;
+        }
+
+        public List<string> getRoomsOfUser(string connectionId) {
+            List<string> rooms = new List<string>();
+            foreach (var item in onlineUsersOfGroups)
+            {
+                if (item.Value.Any(x => x.ConnectionID == connectionId)) {
+                    rooms.Add(item.Key);
+                }
+            }
+            return rooms;
+        }
     }
 }

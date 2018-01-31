@@ -17,7 +17,7 @@
 
         .rooms {
             padding: 20px;
-            background-color: #ff7f50;
+            background-color: #cfd8dc;
             flex-direction: column;
             height: 400px;
             overflow-x: hidden;
@@ -37,7 +37,7 @@
 
         .online {
             padding: 20px;
-            background-color: #90EE90;
+            background-color: #cfd8dc;
             flex-direction: column;
             height: 400px;
             overflow-x: hidden;
@@ -50,7 +50,7 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-sm-3"><h4>Rooms</h4><br>Click on name to switch room</div>
+            <div class="col-sm-3"><h4>Rooms</h4><br><small>Click on name to switch room</small></div>
             <div class="col-sm-7" id="welcome"></div>
             <div class="col-sm-2"><h4>Online</h4></div>
         </div>
@@ -111,10 +111,11 @@
                         roomName = "main";
                     }
 
-
-
                     // Get the user name and store it to prepend to messages.
                     $('#displayname').val(prompt('Enter your name:', ''));
+                    if ($('#displayname').val() == "") {
+                        $('#displayname').val("guest " + Math.floor(Math.random() * 100000));
+                    }
 
                     $('#welcome').append("<h4>Welcome " + $('#displayname').val() + "</h4><br>Your connectionId is = " + $.connection.hub.id);
 
