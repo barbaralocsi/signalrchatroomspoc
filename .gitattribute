@@ -1,1 +1,3 @@
 SignalRChat/Scripts/* linguist-vendored
+*.js linguist-vendored
+SignalRChat/chat.js linguist-vendored=false
